@@ -62,7 +62,8 @@ const FormPropsTextFields: React.FC<FormProps> = ({
           <Checkbox 
             onChange={(e) => setEnviarPedido(e.target.checked)}
             color="primary"
-            checked={enviarPedido}
+            checked 
+            ={enviarPedido}
             
           />
         }
