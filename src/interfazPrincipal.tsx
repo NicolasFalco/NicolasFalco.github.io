@@ -8,13 +8,22 @@ interface FormProps {
   setDireccion: (value: string) => void;
   setTelefono: (value: string) => void;
   setEnviarPedido: (value: boolean) => void;
+  nombre:string;
+  direccion:string;
+  telefono: string;
+  enviarPedido: boolean;
+
 }
 
 const FormPropsTextFields: React.FC<FormProps> = ({
   setNombre,
   setDireccion,
   setTelefono,
-  setEnviarPedido
+  setEnviarPedido,
+  nombre,
+  direccion,
+  telefono,
+  enviarPedido
 }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +37,7 @@ const FormPropsTextFields: React.FC<FormProps> = ({
         variant="outlined"
         fullWidth
         margin="normal"
+        value={nombre}
         onChange={(e) => setNombre(e.target.value)}
       />
       <TextField
@@ -35,6 +45,7 @@ const FormPropsTextFields: React.FC<FormProps> = ({
         variant="outlined"
         fullWidth
         margin="normal"
+        value={direccion}
         onChange={(e) => setDireccion(e.target.value)}
       />
       <TextField
@@ -42,6 +53,7 @@ const FormPropsTextFields: React.FC<FormProps> = ({
         variant="outlined"
         fullWidth
         margin="normal"
+        value= {telefono}
         onChange={(e) => setTelefono(e.target.value)}
       />
 
@@ -50,6 +62,7 @@ const FormPropsTextFields: React.FC<FormProps> = ({
           <Checkbox 
             onChange={(e) => setEnviarPedido(e.target.checked)}
             color="primary"
+            checked={enviarPedido}
             
           />
         }

@@ -48,7 +48,7 @@ const SelectPizzas: React.FC<{ setPizzas: (items: Item[]) => void }> = ({ setPiz
 
   return (
     <div>
-      <FormControl sx={{ m: 1, minWidth: 200 }} variant="outlined">
+      <FormControl sx={{ m: 2, minWidth: 200 }} variant="outlined">
         <InputLabel sx={{top:-10}} id="pizza-select-label">Pizzas</InputLabel>
         <Select
           labelId="pizza-select-label"
@@ -56,7 +56,7 @@ const SelectPizzas: React.FC<{ setPizzas: (items: Item[]) => void }> = ({ setPiz
           multiple
           value={selectedPizzas.map(pizza => pizza.name)}
           onChange={handlePizzaChange}
-          renderValue={(selected) => (selected as string[]).join(', ')}
+          renderValue={(selected) => (selected as string[]).join(',')}
           
         >
           {['Muzarella', 'Argentina', 'Mexicana', 'Calabresa'].map(pizza => (
@@ -70,7 +70,7 @@ const SelectPizzas: React.FC<{ setPizzas: (items: Item[]) => void }> = ({ setPiz
       </FormControl>
 
       {selectedPizzas.map(pizza => (
-        <FormControl sx={{ m: 1, minWidth: 180 }} key={pizza.name}>
+        <FormControl sx={{ m: 2, minWidth: 180 }} key={pizza.name}>
           <InputLabel sx={{top:-10}} id={`quantity-select-label-${pizza.name}`}>{pizza.name} Cantidad</InputLabel>
           <Select
             labelId={`quantity-select-label-${pizza.name}`}
@@ -78,7 +78,7 @@ const SelectPizzas: React.FC<{ setPizzas: (items: Item[]) => void }> = ({ setPiz
             value={pizza.quantity.toString()}
             onChange={(event) => handleQuantityChange(pizza.name, parseInt(event.target.value, 10))}
           >
-            {[1, 2, 3, 4, 5, 6].map(quantity => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ].map(quantity => (
               <MenuItem key={quantity} value={quantity}>{quantity}</MenuItem>
             ))}
           </Select>
@@ -87,6 +87,7 @@ const SelectPizzas: React.FC<{ setPizzas: (items: Item[]) => void }> = ({ setPiz
     </div>
   );
 };
+    
 
 // Componente para seleccionar Lomos
 const SelectLomos: React.FC<{ setLomos: (items: Item[]) => void }> = ({ setLomos }) => {
@@ -112,7 +113,7 @@ const SelectLomos: React.FC<{ setLomos: (items: Item[]) => void }> = ({ setLomos
 
   return (
     <div>
-      <FormControl sx={{ m: 1, minWidth: 200 }}>
+      <FormControl sx={{ m: 2, minWidth: 200 }}>
         <InputLabel sx={{top:-10}} id="lomo-select-label">Lomos</InputLabel>
         <Select
           labelId="lomo-select-label"
@@ -133,7 +134,7 @@ const SelectLomos: React.FC<{ setLomos: (items: Item[]) => void }> = ({ setLomos
       </FormControl>
 
       {selectedLomos.map(lomo => (
-        <FormControl sx={{ m: 1, minWidth: 180 }} key={lomo.name}>
+        <FormControl sx={{ m: 2, minWidth: 180 }} key={lomo.name}>
           <InputLabel sx={{top:-10}} id={`quantity-select-label-${lomo.name}`}>{lomo.name} Cantidad</InputLabel>
           <Select
             labelId={`quantity-select-label-${lomo.name}`}
@@ -141,7 +142,7 @@ const SelectLomos: React.FC<{ setLomos: (items: Item[]) => void }> = ({ setLomos
             value={lomo.quantity.toString()}
             onChange={(event) => handleQuantityChange(lomo.name, parseInt(event.target.value, 10))}
           >
-            {[1, 2, 3, 4, 5, 6].map(quantity => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(quantity => (
               <MenuItem key={quantity} value={quantity}>{quantity}</MenuItem>
             ))}
           </Select>
@@ -153,14 +154,12 @@ const SelectLomos: React.FC<{ setLomos: (items: Item[]) => void }> = ({ setLomos
 
 // Componente principal
 const App: React.FC = () => {
-  const [step, setStep] = useState<number>(1); // Controla el paso actual
-  const [message, setMessage] = useState<string>('¡Haz tu pedido!');
+  const [step, setStep] = useState<number>(1);
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [nombreUsuario, setNombreUsuario] = useState<string>('');
   const [direccionUsuario, setDireccionUsuario] = useState<string>('');
   const [telefonoUsuario, setTelefonoUsuario] = useState<string>(''); 
   const [enviarPedido, setEnviarPedido] = useState<boolean>(false);
-
   const [selectedPizzas, setSelectedPizzas] = useState<Item[]>([]);
   const [selectedLomos, setSelectedLomos] = useState<Item[]>([]);
 
@@ -171,10 +170,10 @@ const App: React.FC = () => {
       setOrderDetails({
         pizzas: selectedPizzas,
         lomos: selectedLomos,
-        nombreUsuario: nombreUsuario,
-        direccionUsuario: direccionUsuario,
-        telefonoUsuario: telefonoUsuario,
-        enviarPedido: enviarPedido,
+        nombreUsuario,
+        direccionUsuario,
+        telefonoUsuario,
+        enviarPedido,
       });
       setStep(3); 
     }
@@ -184,8 +183,16 @@ const App: React.FC = () => {
     setStep(step - 1);
   };
 
-  const handleBackToStep2 = () => {
-    setStep(2);
+  const handleWhatsAppClick = () => {
+    if (!orderDetails) return;
+
+    const pizzas = orderDetails.pizzas.map(pizza => `${pizza.quantity} x ${pizza.name}`).join('\n');
+    const lomos = orderDetails.lomos.map(lomo => `${lomo.quantity} x ${lomo.name}`).join('\n');
+
+    const mensaje = `Pedido de ${orderDetails.nombreUsuario}\nDirección: ${orderDetails.direccionUsuario}\nTeléfono: ${orderDetails.telefonoUsuario}\n\nPizzas:\n${pizzas || 'No hay pizzas seleccionadas'}\n\nLomos:\n${lomos || 'No hay lomos seleccionados'}\n\n¿Enviar pedido?: ${orderDetails.enviarPedido ? 'Sí' : 'No'}`;
+
+    const whatsappUrl = `https://wa.me/3571570657?text=${encodeURIComponent(mensaje)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   return (
@@ -199,16 +206,20 @@ const App: React.FC = () => {
               setDireccion={setDireccionUsuario}
               setTelefono={setTelefonoUsuario}
               setEnviarPedido={setEnviarPedido} 
+              nombre={nombreUsuario}
+              direccion={direccionUsuario}
+              telefono={telefonoUsuario}
+              enviarPedido={enviarPedido}
             />
             <button onClick={handleNextStep} className="App-button" disabled={!nombreUsuario || !telefonoUsuario}>
-              Siguiente 
+              Siguiente
             </button>
           </div>
         )}
 
         {step === 2 && (
           <div>
-            <h1>{message}</h1>
+            <h1>¡Hace tu pedido!</h1>
             <SelectPizzas setPizzas={setSelectedPizzas} />
             <SelectLomos setLomos={setSelectedLomos} />
             <button onClick={handleNextStep} className="App-button">
@@ -220,28 +231,41 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {step === 3 && (
+        {step === 3 && orderDetails && (
           <div>
-            <h1>Pedido Confirmado</h1>
-            <p><strong>Nombre:</strong> {orderDetails?.nombreUsuario}</p>
-            <p><strong>Dirección:</strong> {orderDetails?.direccionUsuario}</p>
-            <p><strong>Teléfono:</strong> {orderDetails?.telefonoUsuario}</p>
-            <h2>Pizzas:</h2>
-            {orderDetails?.pizzas.map(pizza => (
-              <p key={pizza.name}>{pizza.name}: {pizza.quantity}</p>
-            ))}
-            <h2>Lomos:</h2>
-            {orderDetails?.lomos.map(lomo => (
-              <p key={lomo.name}>{lomo.name}: {lomo.quantity}</p>
-            ))}
-            <button onClick={handleBackToStep2} className="App-button">
-              Volver a realizar un pedido
+            <h1>Resumen del pedido</h1>
+            <p>¿Enviar pedido?: {orderDetails.enviarPedido ? 'Sí' : 'No'}</p>
+            <p>Nombre: {orderDetails.nombreUsuario}</p>
+            <p>Dirección: {orderDetails.direccionUsuario}</p>
+            <p>Teléfono: {orderDetails.telefonoUsuario}</p>
+            <h2>Pizzas</h2>
+            {orderDetails.pizzas.length > 0 ? (
+              orderDetails.pizzas.map((pizza, index) => (
+                <p key={index}>{pizza.quantity} x {pizza.name}</p>
+              ))
+            ) : (
+              <p>0</p>
+            )}
+            <h2>Lomos</h2>
+            {orderDetails.lomos.length > 0 ? (
+              orderDetails.lomos.map((lomo, index) => (
+                <p key={index}>{lomo.quantity} x {lomo.name}</p>
+              ))
+            ) : (
+              <p>0</p>
+            )}
+ <button onClick={handleWhatsAppClick} className="App-button">
+              Enviar por WhatsApp
+            </button>
+
+            <button onClick={handleBack} className="App-button">
+              Volver
             </button>
           </div>
         )}
       </header>
     </div>
   );
-};
+}
 
 export default App;
